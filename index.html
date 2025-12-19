@@ -32,6 +32,7 @@
             width: 100%;
             height: 100%;
             display: flex;
+            flex-direction: row; /* SIEMPRE horizontal */
         }
 
         .website-panel {
@@ -39,6 +40,7 @@
             height: 100%;
             position: relative;
             background: white;
+            overflow: hidden;
         }
 
         .website-panel iframe {
@@ -139,31 +141,89 @@
             50% { opacity: 0.5; }
         }
 
-        @media (max-width: 1024px) {
-            .main-container {
-                flex-direction: column-reverse;
-            }
-
+        /* TABLET - 768px a 1024px */
+        @media (max-width: 1024px) and (min-width: 769px) {
             .website-panel {
-                width: 100%;
-                height: 60%;
+                width: 65%; /* Página más grande en tablet */
             }
 
             .chat-panel {
-                width: 100%;
-                height: 40%;
-                border-right: none;
-                border-top: 1px solid #e0e0e0;
+                width: 35%; /* Chat más pequeño */
+            }
+
+            .chat-header h2 {
+                font-size: 16px;
+            }
+
+            .chat-header p {
+                font-size: 12px;
+            }
+
+            .new-chat-button {
+                padding: 10px 15px;
+                font-size: 13px;
             }
         }
 
+        /* MÓVIL - menos de 768px */
         @media (max-width: 768px) {
             .website-panel {
-                height: 50%;
+                width: 55%; /* Balance 55-45 en móvil */
             }
 
             .chat-panel {
-                height: 50%;
+                width: 45%;
+            }
+
+            .chat-header {
+                padding: 12px;
+            }
+
+            .chat-header h2 {
+                font-size: 14px;
+                margin-bottom: 4px;
+            }
+
+            .chat-header p {
+                font-size: 11px;
+            }
+
+            .chat-footer {
+                padding: 10px;
+            }
+
+            .new-chat-button {
+                padding: 10px 12px;
+                font-size: 12px;
+                gap: 6px;
+            }
+        }
+
+        /* MÓVIL PEQUEÑO - menos de 480px */
+        @media (max-width: 480px) {
+            .website-panel {
+                width: 50%; /* 50-50 en móviles muy pequeños */
+            }
+
+            .chat-panel {
+                width: 50%;
+            }
+
+            .chat-header {
+                padding: 10px;
+            }
+
+            .chat-header h2 {
+                font-size: 13px;
+            }
+
+            .chat-header p {
+                font-size: 10px;
+            }
+
+            .new-chat-button {
+                padding: 8px 10px;
+                font-size: 11px;
             }
         }
     </style>
