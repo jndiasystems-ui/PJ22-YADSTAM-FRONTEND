@@ -141,7 +141,6 @@
             50% { opacity: 0.5; }
         }
 
-        /* Estilos para los enlaces de productos */
         .product-link-generated {
             color: #0066cc !important;
             text-decoration: underline !important;
@@ -205,9 +204,6 @@
     <script type="module">
         import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
 
-        // ======================================
-        // GENERADOR DE UUID PARA SESIONES
-        // ======================================
         function generateUUID() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
                 const r = Math.random() * 16 | 0;
@@ -218,17 +214,11 @@
 
         let currentSessionId = generateUUID();
 
-        // ======================================
-        // FUNCIÓN PARA REINICIAR EL CHAT
-        // ======================================
         window.resetChat = function() {
             currentSessionId = generateUUID();
             location.reload();
         }
 
-        // ======================================
-        // INICIALIZAR EL CHAT DE N8N
-        // ======================================
         createChat({
             webhookUrl: 'https://jnd-projects-n8n.ng9sc3.easypanel.host/webhook/72787e3a-02e0-4304-b04a-34eae9ad3be7/chat',
             webhookConfig: { method: 'POST', headers: {} },
@@ -253,9 +243,23 @@
             enableStreaming: false,
         });
 
-        // ======================================
-        // OBTENER LABEL DEL ENLACE SEGÚN IDIOMA
-        // ======================================
+        function replaceText() {
+            const chatWrapper = document.querySelector('#chatWrapper');
+            if (!chatWrapper) return;
+
+            chatWrapper.querySelectorAll('*').forEach(element => {
+                if (element.childNodes.length === 1 && element.childNodes[0].nodeType === Node.TEXT_NODE) {
+                    const text = element.textContent.trim();
+                    if (text === 'title') {
+                        element.textContent = 'שלום 👋';
+                    }
+                    if (text === 'subtitle') {
+                        element.textContent = 'התחילו צ׳אט. אנחנו כאן כדי לעזור';
+                    }
+                }
+            });
+        }
+
         function getUrlLabel() {
             const lang = document.documentElement.lang || 'he';
             const labels = {
@@ -267,28 +271,16 @@
             return labels[lang] || labels['he'];
         }
 
-        // ======================================
-        // FUNCIÓN MEJORADA: CONVERTIR URLs EN LINKS CLICKEABLES
-        // Esta versión busca URLs en TODO el chat container
-        // ======================================
         function convertUrlsToLinks() {
             const chatContainer = document.querySelector('#chatWrapper');
-            if (!chatContainer) {
-                console.warn('⚠️ Chat container no encontrado');
-                return;
-            }
+            if (!chatContainer) return;
 
-            console.log('🔍 Buscando URLs en el chat...');
-
-            // Buscar todos los elementos que contengan texto
             const allElements = chatContainer.querySelectorAll('*');
             let totalConverted = 0;
 
             allElements.forEach(element => {
-                // Evitar procesar elementos ya procesados
                 if (element.dataset.urlsProcessed === 'true') return;
                 
-                // Evitar procesar inputs, scripts, etc.
                 if (element.tagName === 'INPUT' || 
                     element.tagName === 'SCRIPT' || 
                     element.tagName === 'STYLE' ||
@@ -296,7 +288,6 @@
                     return;
                 }
 
-                // Obtener solo los nodos de texto directo (no hijos)
                 const textNodes = [];
                 element.childNodes.forEach(node => {
                     if (node.nodeType === Node.TEXT_NODE) {
@@ -306,14 +297,9 @@
 
                 textNodes.forEach(textNode => {
                     const text = textNode.textContent;
-                    
-                    // Regex para detectar URLs de productos
                     const urlRegex = /(https?:\/\/(www\.)?yadstam\.com\/producto\/[^\s<)"']+)/gi;
                     
                     if (urlRegex.test(text)) {
-                        console.log('✅ URL encontrada en texto:', text);
-                        
-                        // Crear un contenedor temporal
                         const tempDiv = document.createElement('div');
                         tempDiv.innerHTML = text.replace(urlRegex, function(url) {
                             url = url.replace(/[.,;!?)]$/, '');
@@ -321,14 +307,11 @@
                             return `<a href="${url}" class="product-link-generated" data-product-url="${url}">${getUrlLabel()}</a>`;
                         });
                         
-                        // Reemplazar el nodo de texto con el contenido HTML
                         const fragment = document.createDocumentFragment();
                         while (tempDiv.firstChild) {
                             fragment.appendChild(tempDiv.firstChild);
                         }
                         textNode.parentNode.replaceChild(fragment, textNode);
-                        
-                        // Marcar el elemento padre como procesado
                         element.dataset.urlsProcessed = 'true';
                     }
                 });
@@ -336,85 +319,54 @@
 
             if (totalConverted > 0) {
                 console.log(`✅ Total enlaces convertidos: ${totalConverted}`);
-            } else {
-                console.log('ℹ️ No se encontraron URLs de productos para convertir');
             }
         }
 
-        // ======================================
-        // OBSERVADOR DE MUTACIONES (detecta nuevos mensajes)
-        // ======================================
-        const observer = new MutationObserver((mutations) => {
-            console.log('🔄 Cambio detectado en el chat');
-            // Debounce para evitar múltiples llamadas
+        const observer = new MutationObserver(() => {
             clearTimeout(window.urlConversionTimeout);
             window.urlConversionTimeout = setTimeout(() => {
+                replaceText();
                 convertUrlsToLinks();
             }, 300);
         });
 
-        // ======================================
-        // DELEGACIÓN DE EVENTOS PARA CLICKS EN ENLACES
-        // ======================================
         document.addEventListener('click', function(e) {
-            // Buscar si el click fue en un enlace o dentro de uno
             const link = e.target.closest('a');
             
-            if (link && link.href) {
-                const url = link.href;
-                console.log('🔗 Click detectado en enlace:', url);
+            if (link && link.href && link.href.includes('yadstam.com')) {
+                e.preventDefault();
+                e.stopPropagation();
                 
-                // Si es un enlace de yadstam.com
-                if (url.includes('yadstam.com')) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    // Cargar en el iframe
-                    const iframe = document.getElementById('websiteFrame');
-                    if (iframe) {
-                        iframe.src = url;
-                        console.log('✅ URL cargada en iframe:', url);
-                    }
+                const iframe = document.getElementById('websiteFrame');
+                if (iframe) {
+                    iframe.src = link.href;
+                    console.log('✅ URL cargada en iframe:', link.href);
                 }
             }
         }, true);
 
-        // ======================================
-        // INICIALIZACIÓN Y EVENT LISTENERS
-        // ======================================
         setTimeout(() => {
             const chatContainer = document.querySelector('#chatWrapper');
             if (chatContainer) {
-                console.log('✅ Chat container encontrado, inicializando...');
-
-                // Convertir URLs existentes
+                console.log('✅ Chat inicializado');
+                
+                replaceText();
                 convertUrlsToLinks();
-
-                // Observar cambios futuros (nuevos mensajes)
+                
                 observer.observe(chatContainer, {
                     childList: true,
                     subtree: true,
                     characterData: true
                 });
-
-                console.log('✅ Sistema de enlaces inicializado correctamente');
-            } else {
-                console.warn('⚠️ Chat container no encontrado');
             }
         }, 2000);
 
-        // ======================================
-        // BACKUP: Conversión periódica cada 2 segundos
-        // ======================================
         setInterval(() => {
+            replaceText();
             convertUrlsToLinks();
         }, 2000);
 
-        // ======================================
-        // LOG DE INICIALIZACIÓN
-        // ======================================
         console.log('🚀 Yad Hatsam Chatbot cargado');
-        console.log('📋 Session ID:', currentSessionId);
     </script>
 </body>
 </html>
