@@ -32,7 +32,7 @@
             width: 100%;
             height: 100%;
             display: flex;
-            flex-direction: row;
+            flex-direction: row; /* SIEMPRE horizontal */
         }
 
         .website-panel {
@@ -141,19 +141,90 @@
             50% { opacity: 0.5; }
         }
 
+        /* TABLET - 768px a 1024px */
         @media (max-width: 1024px) and (min-width: 769px) {
-            .website-panel { width: 65%; }
-            .chat-panel { width: 35%; }
+            .website-panel {
+                width: 65%; /* Página más grande en tablet */
+            }
+
+            .chat-panel {
+                width: 35%; /* Chat más pequeño */
+            }
+
+            .chat-header h2 {
+                font-size: 16px;
+            }
+
+            .chat-header p {
+                font-size: 12px;
+            }
+
+            .new-chat-button {
+                padding: 10px 15px;
+                font-size: 13px;
+            }
         }
 
+        /* MÓVIL - menos de 768px */
         @media (max-width: 768px) {
-            .website-panel { width: 55%; }
-            .chat-panel { width: 45%; }
+            .website-panel {
+                width: 55%; /* Balance 55-45 en móvil */
+            }
+
+            .chat-panel {
+                width: 45%;
+            }
+
+            .chat-header {
+                padding: 12px;
+            }
+
+            .chat-header h2 {
+                font-size: 14px;
+                margin-bottom: 4px;
+            }
+
+            .chat-header p {
+                font-size: 11px;
+            }
+
+            .chat-footer {
+                padding: 10px;
+            }
+
+            .new-chat-button {
+                padding: 10px 12px;
+                font-size: 12px;
+                gap: 6px;
+            }
         }
 
+        /* MÓVIL PEQUEÑO - menos de 480px */
         @media (max-width: 480px) {
-            .website-panel { width: 50%; }
-            .chat-panel { width: 50%; }
+            .website-panel {
+                width: 50%; /* 50-50 en móviles muy pequeños */
+            }
+
+            .chat-panel {
+                width: 50%;
+            }
+
+            .chat-header {
+                padding: 10px;
+            }
+
+            .chat-header h2 {
+                font-size: 13px;
+            }
+
+            .chat-header p {
+                font-size: 10px;
+            }
+
+            .new-chat-button {
+                padding: 8px 10px;
+                font-size: 11px;
+            }
         }
     </style>
 </head>
@@ -167,7 +238,7 @@
                 </h2>
                 <p>זמין לשירותכם</p>
             </div>
-
+            
             <div class="chat-body-wrapper">
                 <div class="chat-body" id="chatWrapper"></div>
             </div>
@@ -187,7 +258,7 @@
 
     <script type="module">
         import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
-
+        
         function generateUUID() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
                 const r = Math.random() * 16 | 0;
@@ -197,15 +268,20 @@
         }
 
         let currentSessionId = generateUUID();
+        console.log('Session ID:', currentSessionId);
 
         window.resetChat = function() {
             currentSessionId = generateUUID();
+            console.log('Nueva sesión:', currentSessionId);
             location.reload();
         }
 
         createChat({
             webhookUrl: 'https://jnd-projects-n8n.ng9sc3.easypanel.host/webhook/72787e3a-02e0-4304-b04a-34eae9ad3be7/chat',
-            webhookConfig: { method: 'POST', headers: {} },
+            webhookConfig: {
+                method: 'POST',
+                headers: {}
+            },
             target: '#chatWrapper',
             mode: 'fullscreen',
             chatInputKey: 'chatInput',
@@ -221,7 +297,11 @@
             ],
             i18n: {
                 he: {
-                    inputPlaceholder: 'כתוב את השאלה שלך...'
+                    title: '',
+                    subtitle: '',
+                    footer: '',
+                    getStarted: 'התחל',
+                    inputPlaceholder: 'כתוב את השאלה שלך...',
                 },
             },
             enableStreaming: false,
@@ -234,10 +314,13 @@
                     const link = e.target.closest('a');
                     if (link && link.href) {
                         const url = link.href;
-
+                        
                         if (url.includes('yadstam.com')) {
-                            e.preventDefault(); // ✅ SOLO ESTA LÍNEA QUEDA
+                            e.preventDefault();
+                            e.stopPropagation();
+                            
                             document.getElementById('websiteFrame').src = url;
+                            console.log('Abriendo en iframe:', url);
                         }
                     }
                 }, true);
