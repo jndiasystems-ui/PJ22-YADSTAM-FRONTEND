@@ -4,23 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yad Hatsam - Digital Assistant</title>
+
     <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         html, body {
             width: 100%;
             height: 100%;
             position: fixed;
             overflow: hidden;
-            font-family: 'Assistant', -apple-system, sans-serif;
+            font-family: 'Assistant', sans-serif;
         }
 
         body {
@@ -32,21 +30,7 @@
             width: 100%;
             height: 100%;
             display: flex;
-            flex-direction: row; /* SIEMPRE horizontal */
-        }
-
-        .website-panel {
-            width: 70%;
-            height: 100%;
-            position: relative;
-            background: white;
-            overflow: hidden;
-        }
-
-        .website-panel iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
+            flex-direction: row;
         }
 
         .chat-panel {
@@ -56,7 +40,7 @@
             border-right: 1px solid #e0e0e0;
             display: flex;
             flex-direction: column;
-            box-shadow: -2px 0 8px rgba(0, 0, 0, 0.05);
+            box-shadow: -2px 0 8px rgba(0,0,0,0.05);
         }
 
         .chat-header {
@@ -67,29 +51,17 @@
         }
 
         .chat-header h2 {
-            color: #2c3e50;
             font-size: 18px;
             font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .chat-header p {
-            color: #7f8c8d;
-            font-size: 13px;
-            font-weight: 400;
         }
 
         .chat-body-wrapper {
             flex: 1;
-            display: flex;
-            flex-direction: column;
             overflow: hidden;
-            position: relative;
         }
 
         .chat-body {
-            flex: 1;
-            overflow: hidden;
+            height: 100%;
         }
 
         .chat-footer {
@@ -100,232 +72,120 @@
 
         .new-chat-button {
             width: 100%;
-            padding: 12px 20px;
+            padding: 12px;
             background: #2c3e50;
             color: white;
             border: none;
             border-radius: 8px;
-            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-family: 'Assistant', sans-serif;
         }
 
-        .new-chat-button:hover {
-            background: #34495e;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(44, 62, 80, 0.2);
+        .website-panel {
+            width: 70%;
+            height: 100%;
+            background: white;
         }
 
-        .new-chat-button:active {
-            transform: translateY(0);
+        .website-panel iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
         }
 
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background: #27ae60;
-            border-radius: 50%;
-            display: inline-block;
-            margin-left: 6px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        /* TABLET - 768px a 1024px */
-        @media (max-width: 1024px) and (min-width: 769px) {
-            .website-panel {
-                width: 65%; /* Página más grande en tablet */
-            }
-
-            .chat-panel {
-                width: 35%; /* Chat más pequeño */
-            }
-
-            .chat-header h2 {
-                font-size: 16px;
-            }
-
-            .chat-header p {
-                font-size: 12px;
-            }
-
-            .new-chat-button {
-                padding: 10px 15px;
-                font-size: 13px;
-            }
-        }
-
-        /* MÓVIL - menos de 768px */
         @media (max-width: 768px) {
-            .website-panel {
-                width: 55%; /* Balance 55-45 en móvil */
-            }
-
-            .chat-panel {
-                width: 45%;
-            }
-
-            .chat-header {
-                padding: 12px;
-            }
-
-            .chat-header h2 {
-                font-size: 14px;
-                margin-bottom: 4px;
-            }
-
-            .chat-header p {
-                font-size: 11px;
-            }
-
-            .chat-footer {
-                padding: 10px;
-            }
-
-            .new-chat-button {
-                padding: 10px 12px;
-                font-size: 12px;
-                gap: 6px;
-            }
-        }
-
-        /* MÓVIL PEQUEÑO - menos de 480px */
-        @media (max-width: 480px) {
-            .website-panel {
-                width: 50%; /* 50-50 en móviles muy pequeños */
-            }
-
-            .chat-panel {
-                width: 50%;
-            }
-
-            .chat-header {
-                padding: 10px;
-            }
-
-            .chat-header h2 {
-                font-size: 13px;
-            }
-
-            .chat-header p {
-                font-size: 10px;
-            }
-
-            .new-chat-button {
-                padding: 8px 10px;
-                font-size: 11px;
-            }
+            .chat-panel { width: 45%; }
+            .website-panel { width: 55%; }
         }
     </style>
 </head>
-<body>
-    <div class="main-container">
-        <div class="chat-panel">
-            <div class="chat-header">
-                <h2>
-                    עוזר דיגיטלי
-                    <span class="status-dot"></span>
-                </h2>
-                <p>זמין לשירותכם</p>
-            </div>
-            
-            <div class="chat-body-wrapper">
-                <div class="chat-body" id="chatWrapper"></div>
-            </div>
 
-            <div class="chat-footer">
-                <button class="new-chat-button" onclick="resetChat()">
-                    <span>🔄</span>
-                    <span>שיחה חדשה</span>
-                </button>
-            </div>
+<body>
+
+<div class="main-container">
+
+    <!-- CHAT -->
+    <div class="chat-panel">
+        <div class="chat-header">
+            <h2>עוזר דיגיטלי</h2>
+            <p>זמין לשירותכם</p>
         </div>
 
-        <div class="website-panel">
-            <iframe id="websiteFrame" src="https://yadstam.com"></iframe>
+        <div class="chat-body-wrapper">
+            <div class="chat-body" id="chatWrapper"></div>
+        </div>
+
+        <div class="chat-footer">
+            <button class="new-chat-button" onclick="resetChat()">🔄 שיחה חדשה</button>
         </div>
     </div>
 
-    <script type="module">
-        import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
-        
-        function generateUUID() {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                const r = Math.random() * 16 | 0;
-                const v = c == 'x' ? r : (r & 0x3 | 0x8);
-                return v.toString(16);
-            });
-        }
+    <!-- WEBSITE -->
+    <div class="website-panel">
+        <iframe id="websiteFrame" src="https://yadstam.com"></iframe>
+    </div>
 
-        let currentSessionId = generateUUID();
-        console.log('Session ID:', currentSessionId);
+</div>
 
-        window.resetChat = function() {
-            currentSessionId = generateUUID();
-            console.log('Nueva sesión:', currentSessionId);
-            location.reload();
-        }
+<script type="module">
+    import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
 
-        createChat({
-            webhookUrl: 'https://jnd-projects-n8n.ng9sc3.easypanel.host/webhook/72787e3a-02e0-4304-b04a-34eae9ad3be7/chat',
-            webhookConfig: {
-                method: 'POST',
-                headers: {}
-            },
-            target: '#chatWrapper',
-            mode: 'fullscreen',
-            chatInputKey: 'chatInput',
-            chatSessionKey: 'sessionId',
-            sessionId: currentSessionId,
-            loadPreviousSession: false,
-            metadata: {},
-            showWelcomeScreen: false,
-            defaultLanguage: 'he',
-            initialMessages: [
-                'שלום! 👋',
-                'אני כאן לעזור לך למצוא מוצרים. במה אוכל לסייע?'
-            ],
-            i18n: {
-                he: {
-                    title: '',
-                    subtitle: '',
-                    footer: '',
-                    getStarted: 'התחל',
-                    inputPlaceholder: 'כתוב את השאלה שלך...',
-                },
-            },
-            enableStreaming: false,
+    function generateUUID() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+            const r = Math.random() * 16 | 0;
+            return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
         });
+    }
 
-        setTimeout(() => {
-            const chatContainer = document.querySelector('#chatWrapper');
-            if (chatContainer) {
-                chatContainer.addEventListener('click', function(e) {
-                    const link = e.target.closest('a');
-                    if (link && link.href) {
-                        const url = link.href;
-                        
-                        if (url.includes('yadstam.com')) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            
-                            document.getElementById('websiteFrame').src = url;
-                            console.log('Abriendo en iframe:', url);
-                        }
-                    }
-                }, true);
+    let currentSessionId = generateUUID();
+
+    window.resetChat = function () {
+        currentSessionId = generateUUID();
+        location.reload();
+    };
+
+    createChat({
+        webhookUrl: 'https://jnd-projects-n8n.ng9sc3.easypanel.host/webhook/72787e3a-02e0-4304-b04a-34eae9ad3be7/chat',
+        target: '#chatWrapper',
+        mode: 'fullscreen',
+        chatInputKey: 'chatInput',
+        chatSessionKey: 'sessionId',
+        sessionId: currentSessionId,
+        loadPreviousSession: false,
+        showWelcomeScreen: false,
+        defaultLanguage: 'he',
+        initialMessages: [
+            'שלום! 👋',
+            'אני כאן לעזור לך למצוא מוצרים. במה אוכל לסייע?'
+        ],
+        i18n: {
+            he: {
+                inputPlaceholder: 'כתוב את השאלה שלך...'
             }
-        }, 2000);
-    </script>
+        },
+        enableStreaming: false,
+    });
+
+    /* ✅ CLICK HANDLER CORRECTO */
+    setTimeout(() => {
+        const chatContainer = document.querySelector('#chatWrapper');
+
+        if (!chatContainer) return;
+
+        chatContainer.addEventListener('click', (e) => {
+            const link = e.target.closest('a');
+            if (!link || !link.href) return;
+
+            const url = link.href;
+
+            if (url.includes('yadstam.com')) {
+                e.preventDefault(); // SOLO prevenimos navegación
+                document.getElementById('websiteFrame').src = url;
+            }
+        });
+    }, 1000);
+
+</script>
+
 </body>
 </html>
